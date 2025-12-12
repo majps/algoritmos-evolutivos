@@ -70,6 +70,16 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     		}
     	}
     	
+    	repararStock(x);
+    	
+    	//copiamos los valores de x reparado hacia la solution 
+    	for (int i = 0; i < nFamilias; i++) {
+    	    for (int j = 0; j < nMateriales; j++) {
+    	        int k = index(i, j);
+    	        vars.set(k, x[i][j]);
+    	    }
+    	}
+    	
     	//calculo ui para cada familia
     	double[] u = new double[nFamilias];
     	
@@ -135,10 +145,66 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     	if (f2 < 0.0) f2 = 0.0;
     	if (f2 > 0.0) f2 = 1.0;
     	
+    	//ver si queremos agregarle condicion para que no siempre repare / penalice
+    	
+    	double W = 0.0;
+    	for (int j = 0; j < nMateriales; j++) {
+    		for (int i = 0; i < nFamilias; i++) {
+    			W += peso[j]* x[i][j];
+    		}
+    	}
+    	
+    	double exceso = 0.0;
+    	if (W > capacidad) {
+    		exceso = (W-capacidad)/capacidad;
+    		if(exceso < 0) {
+    			exceso = 0;
+    		}
+    	}
+    	
+    	//elegir el parametro lambda de penalizacion
+    	double lambda = 0.1;
+    	
+    	double f1Penalizada = f1 - lambda * exceso;
+    	double f2Penalizada = f2 - lambda * exceso;
+    	
+    	
+    	
+    	
+    	
+    	
     	//para que el algoritmo maximice f1 y f2
-    	solution.objectives()[0] = -f1;
-    	solution.objectives()[1] = -f2;
+    	solution.objectives()[0] = -f1Penalizada;
+    	solution.objectives()[1] = -f2Penalizada;
     	
         return solution;
     }
+
+	private void repararStock(int[][] x) {
+		for (int j = 0; j < nMateriales; j++) {
+			int sumaColumna = 0;
+			for (int i = 0; i< nFamilias; i++) {
+				sumaColumna += x[i][j];
+			}
+			
+			int stockJ = stock[j];
+			
+			if (sumaColumna > stockJ && sumaColumna > 0) {
+				double factor = (double) stockJ / (double) sumaColumna;
+			
+				for (int i = 0; i < nFamilias; i++) {
+					int nuevoValor = (int) Math.floor(x[i][j] * factor);
+					
+					if (nuevoValor > demanda[i][j]) {
+						nuevoValor = demanda[i][j];
+					} else if (nuevoValor < 0) {
+						nuevoValor = 0;
+					}
+					
+					x[i][j] = nuevoValor;
+				}
+			}	
+		}
+		
+	}
 }
