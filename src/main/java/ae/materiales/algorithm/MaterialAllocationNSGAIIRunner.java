@@ -62,7 +62,16 @@ public class MaterialAllocationNSGAIIRunner {
 
         List<IntegerSolution> poblacionFinal = algoritmo.result();
 
+        
+        //pruebas para ver en consola 
         System.out.println("NSGA-II corrió sin romperse");
         System.out.println("Tamaño de la población final: " + poblacionFinal.size());
+        
+        for (int idx = 0; idx < Math.min(5, poblacionFinal.size()); idx++) {
+            IntegerSolution s = poblacionFinal.get(idx);
+            double f1 = -s.objectives()[0];
+            double f2 = -s.objectives()[1];
+            System.out.println("Solución " + idx + " -> f1 = " + f1 + "  f2 = " + f2);
+        }
     }
 }
