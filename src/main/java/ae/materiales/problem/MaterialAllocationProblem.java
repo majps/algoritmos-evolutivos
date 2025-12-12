@@ -139,7 +139,6 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     	solution.objectives()[0] = -f1;
     	solution.objectives()[1] = -f2;
     	
-    	
         return solution;
     }
 }

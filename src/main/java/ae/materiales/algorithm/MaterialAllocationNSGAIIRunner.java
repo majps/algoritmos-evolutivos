@@ -1,5 +1,7 @@
 package ae.materiales.algorithm;
 
+import ae.materiales.instances.Instance;
+import ae.materiales.instances.ProblemInstances;
 import ae.materiales.problem.MaterialAllocationProblem;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
@@ -15,26 +17,30 @@ public class MaterialAllocationNSGAIIRunner {
 
     public static void main(String[] args) {
 
-        // Instancia chiquita de prueba
-        int nFamilias = 2;
-        int nMateriales = 2;
-
-        int[][] demanda = {
-                {10, 5},
-                {3, 7}
-        };
-        int[] stock = {20, 12};
-        double[] peso = {1.0, 1.5};
-        double capacidad = 100.0;
-
+    	String nombreInstancia = (args.length > 0)? args[0] : "pequena";
+    	
+    	Instance instancia = ProblemInstances.instanciaPequena();
+    	
+    	switch (nombreInstancia) {
+    	case "pequena":
+    		instancia = ProblemInstances.instanciaPequena();
+    		break;
+    	case "mediana":
+    		instancia = ProblemInstances.instanciaMediana();
+    		break;
+    	case "grande":
+    		instancia = ProblemInstances.instanciaGrande();
+    		break;
+    	}
+    	
         MaterialAllocationProblem problema =
                 new MaterialAllocationProblem(
-                        nFamilias,
-                        nMateriales,
-                        demanda,
-                        stock,
-                        peso,
-                        capacidad
+                		instancia.nFamilias,
+                		instancia.nMateriales,
+                		instancia.demanda,
+                		instancia.stock,
+                		instancia.peso,
+                		instancia.capacidad
                 );
 
         CrossoverOperator<IntegerSolution> crossover =
