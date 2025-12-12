@@ -111,7 +111,6 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     		}
     	}
     	
-    	
     	//promedio de las satisfacciones, f1
     	double f1 = 0.0;
     	for (int i = 0; i < nFamilias; i++) {
@@ -143,7 +142,7 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     	}
     	
     	if (f2 < 0.0) f2 = 0.0;
-    	if (f2 > 0.0) f2 = 1.0;
+    	if (f2 > 1.0) f2 = 1.0;
     	
     	//ver si queremos agregarle condicion para que no siempre repare / penalice
     	
@@ -167,12 +166,7 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     	
     	double f1Penalizada = f1 - lambda * exceso;
     	double f2Penalizada = f2 - lambda * exceso;
-    	
-    	
-    	
-    	
-    	
-    	
+
     	//para que el algoritmo maximice f1 y f2
     	solution.objectives()[0] = -f1Penalizada;
     	solution.objectives()[1] = -f2Penalizada;

@@ -10,14 +10,14 @@ public class SwapMaterialesMutation implements MutationOperator<IntegerSolution>
     private final double probability;
     private final int numFamilies;
     private final int numMaterials;
-    private final int[] demandaPorFamilia;   // demanda[i][j] simplificada como demanda[i*numMaterials + j]
+    private final int[][] demandaPorFamilia;   // demanda[i][j] simplificada como demanda[i*numMaterials + j]
     private final Random random = new Random();
 
     public SwapMaterialesMutation(
             double probability,
             int numFamilies,
             int numMaterials,
-            int[] demandaPorFamiliaAplanada 
+            int[][] demandaPorFamiliaAplanada 
     ) {
         this.probability = probability;
         this.numFamilies = numFamilies;
@@ -58,7 +58,7 @@ public class SwapMaterialesMutation implements MutationOperator<IntegerSolution>
         int j = random.nextInt(numMaterials);
 
         // Debe tener demanda en destino
-        int demandaDestino = demandaPorFamilia[minFam * numMaterials + j];
+        int demandaDestino = demandaPorFamilia[minFam][j];
         if (demandaDestino == 0) {
             return solution;
         }

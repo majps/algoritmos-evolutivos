@@ -2,6 +2,8 @@ package ae.materiales.algorithm;
 
 import ae.materiales.instances.Instance;
 import ae.materiales.instances.ProblemInstances;
+import ae.materiales.operadores.IncrementUnitMutation;
+import ae.materiales.operadores.SwapMaterialesMutation;
 import ae.materiales.problem.MaterialAllocationProblem;
 import org.uma.jmetal.component.algorithm.EvolutionaryAlgorithm;
 import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
@@ -47,8 +49,7 @@ public class MaterialAllocationNSGAIIRunner {
                 new IntegerSBXCrossover(1.0, 20.0);
 
         MutationOperator<IntegerSolution> mutacion =
-                new IntegerPolynomialMutation(
-                        1.0 / problema.numberOfVariables(), 20.0);
+                new SwapMaterialesMutation(0.8, instancia.nFamilias, instancia.nMateriales, instancia.demanda);
 
         int populationSize = 50;
         int offspringPopulationSize = 50;
@@ -73,7 +74,7 @@ public class MaterialAllocationNSGAIIRunner {
         System.out.println("NSGA-II corrió sin romperse");
         System.out.println("Tamaño de la población final: " + poblacionFinal.size());
         
-        for (int idx = 0; idx < Math.min(5, poblacionFinal.size()); idx++) {
+        for (int idx = 0; idx < Math.min(50, poblacionFinal.size()); idx++) {
             IntegerSolution s = poblacionFinal.get(idx);
             double f1 = -s.objectives()[0];
             double f2 = -s.objectives()[1];
