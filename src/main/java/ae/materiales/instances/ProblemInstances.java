@@ -7,27 +7,27 @@ public class ProblemInstances {
         int[][] demanda = {
                 // C   L   Ce  M
                 { 5,  8,  0,  4},
-                { 3,  0,  4,  2},
+                { 33,  0,  4,  2},
                 { 0, 10,  3,  0},
                 { 2,  4,  5,  3},
                 { 6,  0,  2,  4},
                 { 4,  6,  0,  5},
-                { 1,  3,  2,  0},
+                { 13,  3,  2,  4},
                 { 0,  5,  4,  2},
                 { 4,  3,  6,  3},
-                { 2,  2,  2,  4},
+                { 22,  2,  2,  4},
                 { 0,  4,  3,  1},
-                { 5,  6,  2,  0},
+                { 5,  10,  2,  0},
                 { 4,  0,  5,  3},
                 { 1,  2,  1,  2},
-                { 3,  4,  2,  1}
+                { 5,  4,  2,  1}
             };
 
             // pesos por unidad: chapas, ladrillos, cemento, madera
-            double[] peso = {5.0, 2.0, 10.0, 5.0};
+            double[] peso = {60.0, 20.0, 10.0, 5.0};
 
             // stock total por material (aprox 70–80% de demanda total)
-            int[] stock = {12, 20, 50, 5};
+            int[] stock = {20, 22, 23, 50};
 
             // capacidad del camión (ej: 8000 kg aprox)
             double capacidad = 800.0;

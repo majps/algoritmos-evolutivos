@@ -39,10 +39,25 @@ public class MaterialAllocationNSGAIIRunner {
 
 		MaterialAllocationProblem problema = new MaterialAllocationProblem(instancia.nFamilias, instancia.nMateriales,
 				instancia.demanda, instancia.stock, instancia.peso, instancia.capacidad);
-
-		CrossoverOperator<IntegerSolution> crossover = new ColumnCrossover(0.6, instancia.nFamilias,
+		
+		//---------------------cruzamientos----------------------------
+		CrossoverOperator<IntegerSolution> crossover1 = new ColumnCrossover(0.2, instancia.nFamilias,
 				instancia.nMateriales);
-
+		CrossoverOperator<IntegerSolution> crossover2 = new FilasCrossover(0.4, instancia.nFamilias,
+				instancia.nMateriales);
+		CrossoverOperator<IntegerSolution> crossover3 = new SubMatrizCrossover(0.2, instancia.nFamilias,
+				instancia.nMateriales);
+		CrossoverOperator<IntegerSolution> crossover4 = new PosicionAPosicionCrossover(0.2, instancia.nFamilias,
+				instancia.nMateriales);
+		List<CrossoverOperator<IntegerSolution>>cruzamientos = new ArrayList<>();
+		cruzamientos.add(crossover1);
+		cruzamientos.add(crossover2);
+		cruzamientos.add(crossover3);
+		cruzamientos.add(crossover4);
+		CrossoverOperator<IntegerSolution> crossover = new CompositeCrossover(cruzamientos);
+		//----------------------------------------------------------------------------------------
+		
+		//---------------------mutaciones-------------------------
 		MutationOperator<IntegerSolution> mutacion1 = new SwapMaterialesMutation(0.2, instancia.nFamilias,
 				instancia.nMateriales, instancia.demanda);
 		MutationOperator<IntegerSolution> mutacion2 = new IncrementUnitMutation(0.2, instancia.nFamilias,
@@ -51,8 +66,9 @@ public class MaterialAllocationNSGAIIRunner {
 		mutaciones.add(mutacion1);
 		mutaciones.add(mutacion2);
 		MutationOperator<IntegerSolution> mutacion = new CompositeMutation(mutaciones);
+		//-----------------------------------------------------
 
-		// --------ejecuta el greedy
+		// --------ejecuta el greedy---------------------------
 		GreedySolver greedy = new GreedySolver(instancia, problema);
 		IntegerSolution solGreedy = greedy.allocate();
 		problema.evaluate(solGreedy);
