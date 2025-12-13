@@ -100,21 +100,22 @@ public class MaterialAllocationNSGAIIRunner {
 
 		List<IntegerSolution> poblacionFinal = algoritmo.result();
 		
-		// exportar resultados a CSV para graficar 
+		// ----------------- Exportar resultados a CSV para graficar -----------------
 		String outputFile = "resultados_nsga2_greedy.csv";
 
 		try (FileWriter writer = new FileWriter(outputFile)) {
+		    // Cabecera
 		    writer.write("tipo,f1,f2\n");
 
-		    // población final de NSGA-II
+		    // 1) Población final de NSGA-II
 		    for (IntegerSolution s : poblacionFinal) {
-		        double f1 = -s.objectives()[0]; 
+		        double f1 = -s.objectives()[0]; // recordá que guardaste el negativo
 		        double f2 = -s.objectives()[1];
 
 		        writer.write(String.format("nsga2,%.6f,%.6f%n", f1, f2));
 		    }
 
-		    // solución greedy 
+		    // 2) Solución greedy (un solo punto)
 		    double f1Greedy = -solGreedy.objectives()[0];
 		    double f2Greedy = -solGreedy.objectives()[1];
 		    writer.write(String.format("greedy,%.6f,%.6f%n", f1Greedy, f2Greedy));
@@ -123,7 +124,14 @@ public class MaterialAllocationNSGAIIRunner {
 		} catch (IOException e) {
 		    System.err.println("Error escribiendo archivo de resultados: " + e.getMessage());
 		}
-		// --------------------------------------
+		// --------------------------------------------------------------------------
+		
+		
+		
+		
+		
+		
+		
 
 		// pruebas para ver en consola
 		System.out.println("NSGA-II corrió sin romperse");
