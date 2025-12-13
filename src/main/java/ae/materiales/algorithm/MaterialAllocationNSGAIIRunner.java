@@ -66,6 +66,7 @@ public class MaterialAllocationNSGAIIRunner {
         //--------ejecuta el greedy
         GreedySolver greedy = new GreedySolver(instancia, problema);
         IntegerSolution solGreedy = greedy.allocate();
+        problema.evaluate(solGreedy);
         //--------------------------------------------------
         
         
