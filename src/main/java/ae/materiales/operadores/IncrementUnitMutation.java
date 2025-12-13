@@ -50,11 +50,11 @@ public class IncrementUnitMutation implements MutationOperator<IntegerSolution> 
         int i = random.nextInt(numFamilies);
         int j = random.nextInt(numMaterials);
 
-        // 1️⃣ Chequeo demanda: x_ij + 1 <= d_ij
+        // chequeo demanda: x_ij + 1 <= d_ij
         if (m[i][j] + 1 > demanda[i][j])
             return solution;
 
-        // 2️⃣ Chequeo stock del material j
+        // chequeo stock del material j
         int totalMaterialJ = 0;
         for (int f = 0; f < numFamilies; f++)
             totalMaterialJ += m[f][j];
@@ -63,7 +63,7 @@ public class IncrementUnitMutation implements MutationOperator<IntegerSolution> 
             return solution;
 
         // 3️⃣ Chequeo capacidad total
-        int pesoTotal = 0;
+        double pesoTotal = 0.0;
         for (int f = 0; f < numFamilies; f++)
             for (int k = 0; k < numMaterials; k++)
                 pesoTotal += m[f][k] * peso[k];
@@ -71,7 +71,6 @@ public class IncrementUnitMutation implements MutationOperator<IntegerSolution> 
         if (pesoTotal + peso[j] > capacidad)
             return solution;
 
-        // ✔ Incremento unitario válido
         m[i][j]++;
 
         solutionhelper.updateSolution(solution, m);
