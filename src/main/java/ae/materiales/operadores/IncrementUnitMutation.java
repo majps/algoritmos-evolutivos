@@ -1,5 +1,6 @@
 package ae.materiales.operadores;
-import org.uma.jmetal.operator.mutation.*;
+
+import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
 
 import java.util.Random;
@@ -13,9 +14,10 @@ public class IncrementUnitMutation implements MutationOperator<IntegerSolution> 
     private final int numFamilies;
     private final int numMaterials;
 
-    private final int[] demanda;
-    private final int[] stock;
-    private final int[] cargaMax;
+    private final int[][] demanda;   // d_ij
+    private final int[] stock;       // s_j
+    private final double[] peso;        // p_j
+    private final double capacidad;     // C
 
     private final Random random = new Random();
 
@@ -23,20 +25,23 @@ public class IncrementUnitMutation implements MutationOperator<IntegerSolution> 
             double probability,
             int numFamilies,
             int numMaterials,
-            int[] demandaAplanada,
+            int[][] demanda,
             int[] stock,
-            int[] cargaMax
+            double[] peso,
+            double capacidad
     ) {
         this.probability = probability;
         this.numFamilies = numFamilies;
         this.numMaterials = numMaterials;
-        this.demanda = demandaAplanada;
+        this.demanda = demanda;
         this.stock = stock;
-        this.cargaMax = cargaMax;
+        this.peso = peso;
+        this.capacidad = capacidad;
     }
 
     @Override
     public IntegerSolution execute(IntegerSolution solution) {
+
         if (random.nextDouble() > probability)
             return solution;
 
@@ -45,35 +50,36 @@ public class IncrementUnitMutation implements MutationOperator<IntegerSolution> 
         int i = random.nextInt(numFamilies);
         int j = random.nextInt(numMaterials);
 
-        // Chequeo demanda
-        int current = m[i][j];
-        int demandaMax = demanda[i * numMaterials + j];
-        if (current + 1 > demandaMax)
+        // 1️⃣ Chequeo demanda: x_ij + 1 <= d_ij
+        if (m[i][j] + 1 > demanda[i][j])
             return solution;
 
-        // Chequeo stock global del material j
-        int sumMaterial = 0;
+        // 2️⃣ Chequeo stock del material j
+        int totalMaterialJ = 0;
         for (int f = 0; f < numFamilies; f++)
-            sumMaterial += m[f][j];
-        if (sumMaterial + 1 > stock[j])
+            totalMaterialJ += m[f][j];
+
+        if (totalMaterialJ + 1 > stock[j])
             return solution;
 
-        // Chequeo carga familia
-        int carga = 0;
-        for (int f = 0; f < numMaterials; f++)
-            carga += m[i][f];
-        if (carga + 1 > cargaMax[i])
+        // 3️⃣ Chequeo capacidad total
+        int pesoTotal = 0;
+        for (int f = 0; f < numFamilies; f++)
+            for (int k = 0; k < numMaterials; k++)
+                pesoTotal += m[f][k] * peso[k];
+
+        if (pesoTotal + peso[j] > capacidad)
             return solution;
 
-        // Si todo OK, incrementar
+        // ✔ Incremento unitario válido
         m[i][j]++;
 
         solutionhelper.updateSolution(solution, m);
         return solution;
     }
 
-	@Override
-	public double mutationProbability() {
-		return probability;
-	}
+    @Override
+    public double mutationProbability() {
+        return probability;
+    }
 }

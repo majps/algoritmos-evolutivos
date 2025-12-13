@@ -14,17 +14,17 @@ public class ProblemInstances {
                 { 4,  6,  0,  5},
                 { 1,  3,  2,  0},
                 { 0,  5,  4,  2},
-                { 3,  0,  6,  3},
-                { 2,  2,  0,  4},
+                { 4,  3,  6,  3},
+                { 2,  2,  2,  4},
                 { 0,  4,  3,  1},
                 { 5,  6,  2,  0},
                 { 4,  0,  5,  3},
-                { 1,  2,  0,  2},
+                { 1,  2,  1,  2},
                 { 3,  4,  2,  1}
             };
 
             // pesos por unidad: chapas, ladrillos, cemento, madera
-            double[] peso = {15.0, 30.0, 40.0, 25.0};
+            double[] peso = {25.0, 60.0, 30.0, 25.0};
 
             // stock total por material (aprox 70–80% de demanda total)
             int[] stock = {60, 80, 50, 55};
