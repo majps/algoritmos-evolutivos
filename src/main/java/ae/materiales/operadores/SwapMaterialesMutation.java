@@ -10,7 +10,7 @@ public class SwapMaterialesMutation implements MutationOperator<IntegerSolution>
     private final double probability;
     private final int numFamilies;
     private final int numMaterials;
-    private final int[][] demandaPorFamilia;   // demanda[i][j] simplificada como demanda[i*numMaterials + j]
+    private final int[][] demandaPorFamilia;   
     private final Random random = new Random();
 
     public SwapMaterialesMutation(
@@ -31,11 +31,10 @@ public class SwapMaterialesMutation implements MutationOperator<IntegerSolution>
 
         int[][] m = solutionhelper.toMatrix(solution, numFamilies, numMaterials);
 
-        // --------------------------
         // Selección heurística:
         // Familia A = más cargada
         // Familia B = menos cargada
-        // --------------------------
+        
         int maxFam = 0, minFam = 0;
         int maxCarga = -1, minCarga = Integer.MAX_VALUE;
 
@@ -68,7 +67,7 @@ public class SwapMaterialesMutation implements MutationOperator<IntegerSolution>
         m[maxFam][j] = m[minFam][j];
         m[minFam][j] = temp;
 
-        // ajusto dependiendo las demandas para coherencia:
+        // ajusto dependiendo las demandas para coherencia
         if (m[minFam][j] > demandaPorFamilia[minFam][j]) {
             m[minFam][j] = demandaPorFamilia[minFam][j];
         }
@@ -76,8 +75,6 @@ public class SwapMaterialesMutation implements MutationOperator<IntegerSolution>
             m[maxFam][j] = demandaPorFamilia[maxFam][j];
         }
 
-        
-        
         solutionhelper.updateSolution(solution, m);
         return solution;
     }
