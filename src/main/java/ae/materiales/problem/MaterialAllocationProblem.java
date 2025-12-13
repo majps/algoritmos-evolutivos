@@ -70,7 +70,7 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     		}
     	}
     	
-    	repararStock(x);
+    	//repararStock(x);
     	
     	//copiamos los valores de x reparado hacia la solution 
     	for (int i = 0; i < nFamilias; i++) {

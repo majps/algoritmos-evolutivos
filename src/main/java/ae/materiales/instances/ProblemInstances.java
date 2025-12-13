@@ -24,13 +24,13 @@ public class ProblemInstances {
             };
 
             // pesos por unidad: chapas, ladrillos, cemento, madera
-            double[] peso = {25.0, 60.0, 30.0, 25.0};
+            double[] peso = {5.0, 2.0, 10.0, 5.0};
 
             // stock total por material (aprox 70–80% de demanda total)
-            int[] stock = {60, 80, 50, 55};
+            int[] stock = {12, 20, 50, 5};
 
             // capacidad del camión (ej: 8000 kg aprox)
-            double capacidad = 8000.0;
+            double capacidad = 800.0;
 
         return new Instance(nFamilias, nMateriales, demanda, stock, peso, capacidad);
     }
