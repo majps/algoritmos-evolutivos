@@ -40,7 +40,8 @@ public class MaterialAllocationNSGAIIRunner {
 		MaterialAllocationProblem problema = new MaterialAllocationProblem(instancia.nFamilias, instancia.nMateriales,
 				instancia.demanda, instancia.stock, instancia.peso, instancia.capacidad);
 		
-		//---------------------cruzamientos----------------------------
+		//cruzamientos:
+		
 		CrossoverOperator<IntegerSolution> crossover1 = new ColumnCrossover(0.2, instancia.nFamilias,
 				instancia.nMateriales);
 		CrossoverOperator<IntegerSolution> crossover2 = new FilasCrossover(0.4, instancia.nFamilias,
@@ -49,29 +50,38 @@ public class MaterialAllocationNSGAIIRunner {
 				instancia.nMateriales);
 		CrossoverOperator<IntegerSolution> crossover4 = new PosicionAPosicionCrossover(0.2, instancia.nFamilias,
 				instancia.nMateriales);
+		
 		List<CrossoverOperator<IntegerSolution>>cruzamientos = new ArrayList<>();
 		cruzamientos.add(crossover1);
 		cruzamientos.add(crossover2);
 		cruzamientos.add(crossover3);
 		cruzamientos.add(crossover4);
-		CrossoverOperator<IntegerSolution> crossover = new CompositeCrossover(cruzamientos);
-		//----------------------------------------------------------------------------------------
 		
-		//---------------------mutaciones-------------------------
+		CrossoverOperator<IntegerSolution> crossover = new CompositeCrossover(cruzamientos);
+		
+		//--------------------------------------------------------
+		
+		//mutaciones:
+		
 		MutationOperator<IntegerSolution> mutacion1 = new SwapMaterialesMutation(0.2, instancia.nFamilias,
 				instancia.nMateriales, instancia.demanda);
 		MutationOperator<IntegerSolution> mutacion2 = new IncrementUnitMutation(0.2, instancia.nFamilias,
 				instancia.nMateriales, instancia.demanda, instancia.stock, instancia.peso, instancia.capacidad);
+		
 		List<MutationOperator<IntegerSolution>> mutaciones = new ArrayList<>();
 		mutaciones.add(mutacion1);
 		mutaciones.add(mutacion2);
+		
 		MutationOperator<IntegerSolution> mutacion = new CompositeMutation(mutaciones);
+		
 		//-----------------------------------------------------
 
-		// --------ejecuta el greedy---------------------------
+		//ejecuta el greedy:
+		
 		GreedySolver greedy = new GreedySolver(instancia, problema);
 		IntegerSolution solGreedy = greedy.allocate();
 		problema.evaluate(solGreedy);
+		
 		// --------------------------------------------------
 
 		int populationSize = 50;
@@ -97,15 +107,11 @@ public class MaterialAllocationNSGAIIRunner {
 			System.out.println("Solución " + idx + " -> f1 = " + f1 + "  f2 = " + f2);
 		}
 
-		// -----------------intenta imprimir lo del
 		System.out.println("------------------------- ");
-		// greedy---------------------------------------------------------
-		for (int idx = 0; idx < Math.min(50, poblacionFinal.size()); idx++) {
-			IntegerSolution s = solGreedy;
-			double f1 = -s.objectives()[0];
-			double f2 = -s.objectives()[1];
-			System.out.println("Solución " + idx + " -> f1 = " + f1 + "  f2 = " + f2);
-		}
-		// ---------------------------------------------------------------------------------
+		System.out.println("Solución Greedy:");
+		double f1Greedy = -solGreedy.objectives()[0];
+		double f2Greedy = -solGreedy.objectives()[1];
+		System.out.println("Greedy -> f1 = " + f1Greedy + "  f2 = " + f2Greedy);
+
 	}
 }
