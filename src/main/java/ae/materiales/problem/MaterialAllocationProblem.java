@@ -15,6 +15,11 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     private int[] stock;      // s_j
     private double[] peso;  // p_j
     private double capacidad;  // C
+    
+ // --- seed opcional para inicializar NSGA-II con una solución conocida (ej: greedy)
+    private List<Integer> seedVariables = null;
+    private boolean seedUsed = false;
+
 
     public MaterialAllocationProblem(
             int nFamilias,
@@ -52,6 +57,39 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
         numberOfConstraints(0);       // por ahora sin constraints explícitas
         name("MaterialAllocationProblem");
     }
+
+    public void setSeedFromSolution(IntegerSolution seed) {
+        this.seedVariables = new ArrayList<>(seed.variables());
+        this.seedUsed = false; // importante si corrés varias veces el algoritmo
+    }
+    
+    @Override
+    public IntegerSolution createSolution() {
+        IntegerSolution s = super.createSolution();
+
+        if (seedVariables != null && !seedUsed) {
+            seedUsed = true;
+
+            // copiamos el vector del greedy
+            for (int k = 0; k < seedVariables.size(); k++) {
+                int v = seedVariables.get(k);
+
+                // bounds: 0..demanda[i][j]
+                int i = k / nMateriales;
+                int j = k % nMateriales;
+                int ub = demanda[i][j];
+
+                if (v < 0) v = 0;
+                if (v > ub) v = ub;
+
+                s.variables().set(k, v);
+            }
+        }
+
+        return s;
+    }
+
+
 
     private int index(int i, int j) {
         return i * nMateriales + j;

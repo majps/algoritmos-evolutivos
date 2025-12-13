@@ -1,71 +1,109 @@
 package ae.materiales.instances;
 
+import java.util.Random;
+
 public class ProblemInstances {
-	public static Instance instanciaPequena() {
+
+    // 6 materiales (en el informe: chapa, madera, cemento, cal, ticholo, clavos)
+    // pesos por unidad (kg)
+    private static final double[] PESO = {
+            19.0, // chapa (estimado)
+            8.0,  // madera
+            25.0, // cemento
+            25.0, // cal
+            4.0,  // ticholo
+            1.0   // clavos
+    };
+
+    private static final int N_MAT = PESO.length;
+
+    public static Instance instanciaPequena() {
         int nFamilias = 15;
-        int nMateriales = 4;
-        int[][] demanda = {
-                // C   L   Ce  M
-                { 5,  8,  0,  4},
-                { 33,  0,  4,  2},
-                { 0, 10,  3,  0},
-                { 2,  4,  5,  3},
-                { 6,  0,  2,  4},
-                { 4,  6,  0,  5},
-                { 13,  3,  2,  4},
-                { 0,  5,  4,  2},
-                { 4,  3,  6,  3},
-                { 22,  2,  2,  4},
-                { 0,  4,  3,  1},
-                { 5,  10,  2,  0},
-                { 4,  0,  5,  3},
-                { 1,  2,  1,  2},
-                { 5,  4,  2,  1}
-            };
+        double capacidad = 2 * 5950.0; // kg (capacidad total)
 
-            // pesos por unidad: chapas, ladrillos, cemento, madera
-            double[] peso = {60.0, 20.0, 10.0, 5.0};
+        int[][] demanda = generarDemanda(nFamilias, 101L);
 
-            // stock total por material (aprox 70–80% de demanda total)
-            int[] stock = {20, 22, 23, 50};
+        // ratios de stock por material (escasez controlada)
+        double[] ratios = {0.65, 0.70, 0.55, 0.60, 0.60, 0.80};
+        int[] stock = generarStock(demanda, ratios);
 
-            // capacidad del camión (ej: 8000 kg aprox)
-            double capacidad = 800.0;
-
-        return new Instance(nFamilias, nMateriales, demanda, stock, peso, capacidad);
+        return new Instance(nFamilias, N_MAT, demanda, stock, PESO, capacidad);
     }
 
     public static Instance instanciaMediana() {
-        int nFamilias = 3;
-        int nMateriales = 3;
+        int nFamilias = 45;
+        double capacidad = 5 * 7600.0; // kg
 
-        int[][] demanda = {
-                {10,  5,  0},
-                { 4,  2,  6},
-                { 0,  3,  8}
-        };
+        int[][] demanda = generarDemanda(nFamilias, 202L);
 
-        int[] stock = {20, 10, 15};
-        double[] peso = {1.0, 2.0, 3.0};
-        double capacidad = 100.0;
+        double[] ratios = {0.62, 0.68, 0.52, 0.58, 0.58, 0.78};
+        int[] stock = generarStock(demanda, ratios);
 
-        return new Instance(nFamilias, nMateriales, demanda, stock, peso, capacidad);
+        return new Instance(nFamilias, N_MAT, demanda, stock, PESO, capacidad);
     }
 
     public static Instance instanciaGrande() {
-        int nFamilias = 3;
-        int nMateriales = 3;
+        int nFamilias = 100;
+        double capacidad = 10 * 8000.0; // kg
 
-        int[][] demanda = {
-                {10,  5,  0},
-                { 4,  2,  6},
-                { 0,  3,  8}
-        };
+        int[][] demanda = generarDemanda(nFamilias, 303L);
 
-        int[] stock = {20, 10, 15};
-        double[] peso = {1.0, 2.0, 3.0};
-        double capacidad = 100.0;
+        double[] ratios = {0.60, 0.66, 0.50, 0.56, 0.56, 0.75};
+        int[] stock = generarStock(demanda, ratios);
 
-        return new Instance(nFamilias, nMateriales, demanda, stock, peso, capacidad);
+        return new Instance(nFamilias, N_MAT, demanda, stock, PESO, capacidad);
+    }
+
+    // ------------------------
+    // Demanda reproducible
+    // ------------------------
+    private static int[][] generarDemanda(int nFamilias, long seed) {
+        Random rnd = new Random(seed);
+        int[][] d = new int[nFamilias][N_MAT];
+
+        for (int i = 0; i < nFamilias; i++) {
+            // 40% leve, 40% media, 20% severa
+            double r = rnd.nextDouble();
+            int nivel = (r < 0.40) ? 0 : (r < 0.80 ? 1 : 2);
+
+            // demandas base por nivel (unidades)
+            int[] base;
+            switch (nivel) {
+                case 0: base = new int[]{ 6,  4,  4,  0, 20, 1}; break;
+                case 1: base = new int[]{10,  7,  8,  4, 40, 2}; break;
+                default: base = new int[]{16, 10, 12,  8, 70, 3}; break;
+            }
+
+            // variación +-20%
+            for (int j = 0; j < N_MAT; j++) {
+                double factor = 0.8 + 0.4 * rnd.nextDouble();
+                int val = (int) Math.round(base[j] * factor);
+
+                // no siempre se necesita cal/ticholo
+                if (j == 3 && rnd.nextDouble() < 0.25) val = 0;
+                if (j == 4 && rnd.nextDouble() < 0.15) val = 0;
+
+                d[i][j] = Math.max(0, val);
+            }
+        }
+        return d;
+    }
+
+    // ------------------------
+    // Stock como % de demanda total
+    // ------------------------
+    private static int[] generarStock(int[][] demanda, double[] ratios) {
+        int[] stock = new int[N_MAT];
+
+        for (int j = 0; j < N_MAT; j++) {
+            int total = 0;
+            for (int i = 0; i < demanda.length; i++) total += demanda[i][j];
+
+            int s = (int) Math.round(total * ratios[j]);
+
+            if (total > 0) s = Math.max(1, Math.min(s, total));
+            stock[j] = s;
+        }
+        return stock;
     }
 }

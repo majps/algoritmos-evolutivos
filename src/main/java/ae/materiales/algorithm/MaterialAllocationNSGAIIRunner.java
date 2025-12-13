@@ -13,6 +13,8 @@ import org.uma.jmetal.component.algorithm.multiobjective.NSGAIIBuilder;
 import org.uma.jmetal.operator.crossover.CrossoverOperator;
 import org.uma.jmetal.operator.mutation.MutationOperator;
 import org.uma.jmetal.solution.integersolution.IntegerSolution;
+import org.uma.jmetal.component.catalogue.common.termination.impl.TerminationByEvaluations;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,19 +27,22 @@ public class MaterialAllocationNSGAIIRunner {
 
 	public static void main(String[] args) {
 
-		String nombreInstancia = (args.length > 0) ? args[0] : "pequena";
+		Instance instancia = ProblemInstances.instanciaPequena(); //inicializar con pequena por default
 
-		Instance instancia = ProblemInstances.instanciaPequena();
+		String nombreInstancia = (args.length > 0) ? args[0] : "mediana";
 
 		switch (nombreInstancia) {
 		case "pequena":
 			instancia = ProblemInstances.instanciaPequena();
+			System.out.println("Instancia pequena");
 			break;
 		case "mediana":
 			instancia = ProblemInstances.instanciaMediana();
+			System.out.println("Instancia mediana");
 			break;
 		case "grande":
 			instancia = ProblemInstances.instanciaGrande();
+			System.out.println("Instancia grande");
 			break;
 		}
 
@@ -67,11 +72,19 @@ public class MaterialAllocationNSGAIIRunner {
 		
 		//mutaciones:
 		
-		MutationOperator<IntegerSolution> mutacion1 = new SwapMaterialesMutation(0.2, instancia.nFamilias,
-				instancia.nMateriales, instancia.demanda);
-		MutationOperator<IntegerSolution> mutacion2 = new IncrementUnitMutation(0.2, instancia.nFamilias,
-				instancia.nMateriales, instancia.demanda, instancia.stock, instancia.peso, instancia.capacidad);
-		
+		double pm;
+		switch (nombreInstancia) {
+		  case "pequena": pm = 0.15; break;
+		  case "mediana": pm = 0.20; break;
+		  default:        pm = 0.12; break;
+		}
+
+		MutationOperator<IntegerSolution> mutacion1 = new SwapMaterialesMutation(pm, instancia.nFamilias,
+		    instancia.nMateriales, instancia.demanda);
+
+		MutationOperator<IntegerSolution> mutacion2 = new IncrementUnitMutation(pm, instancia.nFamilias,
+		    instancia.nMateriales, instancia.demanda, instancia.stock, instancia.peso, instancia.capacidad);
+
 		List<MutationOperator<IntegerSolution>> mutaciones = new ArrayList<>();
 		mutaciones.add(mutacion1);
 		mutaciones.add(mutacion2);
@@ -85,15 +98,32 @@ public class MaterialAllocationNSGAIIRunner {
 		GreedySolver greedy = new GreedySolver(instancia, problema);
 		IntegerSolution solGreedy = greedy.allocate();
 		problema.evaluate(solGreedy);
-		
+		if (!"pequena".equals(nombreInstancia)) {
+		    problema.setSeedFromSolution(solGreedy);
+		}
+
+
 		// --------------------------------------------------
 
 		int populationSize = 50;
 		int offspringPopulationSize = 50;
 
+		int maxEvaluations;
+		switch (nombreInstancia) {
+		  case "pequena": maxEvaluations = 50_000; break;
+		  case "mediana": maxEvaluations = 150_000; break;
+		  default:        maxEvaluations = 300_000; break; // grande
+		}
+
+		EvolutionaryAlgorithm<IntegerSolution> algoritmo =
+		    new NSGAIIBuilder<IntegerSolution>(problema, populationSize, offspringPopulationSize, crossover, mutacion)
+		        .setTermination(new TerminationByEvaluations(maxEvaluations))
+		        .build();
+
+		
 		// de jmetal-component
-		EvolutionaryAlgorithm<IntegerSolution> algoritmo = new NSGAIIBuilder<IntegerSolution>(problema, populationSize,
-				offspringPopulationSize, crossover, mutacion).build();
+		//EvolutionaryAlgorithm<IntegerSolution> algoritmo = new NSGAIIBuilder<IntegerSolution>(problema, populationSize,
+		//		offspringPopulationSize, crossover, mutacion).build();
 
 		// Ejecutar el algoritmo
 		algoritmo.run();
