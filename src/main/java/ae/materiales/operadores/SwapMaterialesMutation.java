@@ -68,6 +68,16 @@ public class SwapMaterialesMutation implements MutationOperator<IntegerSolution>
         m[maxFam][j] = m[minFam][j];
         m[minFam][j] = temp;
 
+        // ajusto dependiendo las demandas para coherencia:
+        if (m[minFam][j] > demandaPorFamilia[minFam][j]) {
+            m[minFam][j] = demandaPorFamilia[minFam][j];
+        }
+        if (m[maxFam][j] > demandaPorFamilia[maxFam][j]) {
+            m[maxFam][j] = demandaPorFamilia[maxFam][j];
+        }
+
+        
+        
         solutionhelper.updateSolution(solution, m);
         return solution;
     }
