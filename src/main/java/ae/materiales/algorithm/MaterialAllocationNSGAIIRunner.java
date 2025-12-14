@@ -29,7 +29,7 @@ public class MaterialAllocationNSGAIIRunner {
 
 		Instance instancia = ProblemInstances.instanciaPequena(); //inicializar con pequena por default
 
-		String nombreInstancia = (args.length > 0) ? args[0] : "mediana";
+		String nombreInstancia = (args.length > 0) ? args[0] : "grande";
 
 		switch (nombreInstancia) {
 		case "pequena":
