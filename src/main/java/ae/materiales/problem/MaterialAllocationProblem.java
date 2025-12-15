@@ -20,6 +20,11 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     private List<Integer> seedVariables = null;
     private boolean seedUsed = false;
 
+ // --- penalización adaptativa ---
+    private int currentGeneration = 0;
+    private int maxGenerations = 1; // evitar división por cero
+    //------------------------------------------
+
 
     public MaterialAllocationProblem(
             int nFamilias,
@@ -199,8 +204,13 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
     		}
     	}
     	
-    	//elegir el parametro lambda de penalizacion
-    	double lambda = 0.1;
+    	// para penalización adaptativa según generación----------
+    	double lambdaMin = 0.01;
+    	double lambdaMax = 1.0;
+
+    	double progress = (double) currentGeneration / (double) maxGenerations;
+    	double lambda = lambdaMin + (lambdaMax - lambdaMin) * progress;
+    	//------------------------------------------------------
     	
     	double f1Penalizada = f1 - lambda * exceso;
     	double f2Penalizada = f2 - lambda * exceso;
@@ -239,4 +249,20 @@ public class MaterialAllocationProblem extends AbstractIntegerProblem {
 		}
 		
 	}
+	
+	// para penalizacion adaptativa----------------------------
+	public void setCurrentGeneration(int gen) {
+	    this.currentGeneration = gen;
+	}
+
+	public void setMaxGenerations(int maxGen) {
+	    this.maxGenerations = Math.max(1, maxGen);
+	}
+
+	public void setPopulationSize(int populationSize) {
+		// TODO Auto-generated method stub
+		
+	}
+	//-----------------------------------------------------
+
 }

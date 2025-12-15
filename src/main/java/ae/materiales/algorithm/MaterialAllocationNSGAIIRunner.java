@@ -1,5 +1,5 @@
 package ae.materiales.algorithm;
-
+import java.util.Locale;
 import ae.materiales.GreedySolver;
 import ae.materiales.instances.Instance;
 import ae.materiales.instances.ProblemInstances;
@@ -28,7 +28,12 @@ public class MaterialAllocationNSGAIIRunner {
 	public static void main(String[] args) {
 
 		Instance instancia = ProblemInstances.instanciaPequena(); //inicializar con pequena por default
+		
+		int populationSize = 50;
+		int offspringPopulationSize = 50;
 
+		int maxEvaluations;
+		
 		String nombreInstancia = (args.length > 0) ? args[0] : "grande";
 
 		switch (nombreInstancia) {
@@ -45,9 +50,19 @@ public class MaterialAllocationNSGAIIRunner {
 			System.out.println("Instancia grande");
 			break;
 		}
+		switch (nombreInstancia) {
+		  case "pequena": maxEvaluations = 50_000; break;
+		  case "mediana": maxEvaluations = 150_000; break;
+		  default:        maxEvaluations = 300_000; break; // grande
+		}
+		
 
 		MaterialAllocationProblem problema = new MaterialAllocationProblem(instancia.nFamilias, instancia.nMateriales,
 				instancia.demanda, instancia.stock, instancia.peso, instancia.capacidad);
+		problema.setPopulationSize(populationSize);
+
+		int maxGenerations = maxEvaluations / populationSize;
+		problema.setMaxGenerations(maxGenerations);
 		
 		//cruzamientos:
 		
@@ -105,15 +120,17 @@ public class MaterialAllocationNSGAIIRunner {
 
 		// --------------------------------------------------
 
-		int populationSize = 100;
-		int offspringPopulationSize = 100;
 
-		int maxEvaluations;
-		switch (nombreInstancia) {
+		//int populationSize = 50;
+		//int offspringPopulationSize = 50;
+
+
+		//int maxEvaluations;
+		/*switch (nombreInstancia) {
 		  case "pequena": maxEvaluations = 50_000; break;
 		  case "mediana": maxEvaluations = 600_000; break;
 		  default:        maxEvaluations = 300_000; break; // grande
-		}
+		}*/
 
 		EvolutionaryAlgorithm<IntegerSolution> algoritmo =
 		    new NSGAIIBuilder<IntegerSolution>(problema, populationSize, offspringPopulationSize, crossover, mutacion)
@@ -123,7 +140,12 @@ public class MaterialAllocationNSGAIIRunner {
 		long startTime = System.currentTimeMillis();
 
 		// Ejecutar el algoritmo
+		long start = System.nanoTime();
 		algoritmo.run();
+		long end = System.nanoTime();
+		double timeMs = (end - start) / 1e6;
+		System.out.println(timeMs);
+
 
 		List<IntegerSolution> poblacionFinal = algoritmo.result();
 		
@@ -143,14 +165,17 @@ public class MaterialAllocationNSGAIIRunner {
 		    for (IntegerSolution s : poblacionFinal) {
 		        double f1 = -s.objectives()[0]; 
 		        double f2 = -s.objectives()[1];
-
-		        writer.write(String.format("nsga2,%.6f,%.6f%n", f1, f2));
+		        
+		      //agregue el Locale.US para que me guarde bien el csv , si te llega a complicar sacale eso nomas
+		        writer.write(String.format(Locale.US,"nsga2,%.6f,%.6f%n", f1, f2));
 		    }
 
 		    // solución greedy 
 		    double f1Greedy = -solGreedy.objectives()[0];
 		    double f2Greedy = -solGreedy.objectives()[1];
-		    writer.write(String.format("greedy,%.6f,%.6f%n", f1Greedy, f2Greedy));
+		    
+		    //agregue el Locale.US para que me guarde bien el csv , si te llega a complicar sacale eso nomas
+		    writer.write(String.format(Locale.US,"greedy,%.6f,%.6f%n", f1Greedy, f2Greedy));
 
 		    System.out.println("Resultados guardados en: " + outputFile);
 		} catch (IOException e) {
