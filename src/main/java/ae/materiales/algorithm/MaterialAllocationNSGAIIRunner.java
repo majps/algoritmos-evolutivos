@@ -29,13 +29,15 @@ public class MaterialAllocationNSGAIIRunner {
 
 		Instance instancia = ProblemInstances.instanciaPequena(); //inicializar con pequena por default
 		
-		int populationSize = 50;
-		int offspringPopulationSize = 50;
+		int populationSize = 150; //C25
+		int offspringPopulationSize = populationSize;
 
-		int maxEvaluations;
+		int maxEvaluations = 600_000;
 		
 		String nombreInstancia = (args.length > 0) ? args[0] : "grande";
+		String runId = (args.length > 1) ? args[1] : "0";
 
+		
 		switch (nombreInstancia) {
 		case "pequena":
 			instancia = ProblemInstances.instanciaPequena();
@@ -50,12 +52,6 @@ public class MaterialAllocationNSGAIIRunner {
 			System.out.println("Instancia grande");
 			break;
 		}
-		switch (nombreInstancia) {
-		  case "pequena": maxEvaluations = 50_000; break;
-		  case "mediana": maxEvaluations = 150_000; break;
-		  default:        maxEvaluations = 300_000; break; // grande
-		}
-		
 
 		MaterialAllocationProblem problema = new MaterialAllocationProblem(instancia.nFamilias, instancia.nMateriales,
 				instancia.demanda, instancia.stock, instancia.peso, instancia.capacidad);
@@ -66,14 +62,17 @@ public class MaterialAllocationNSGAIIRunner {
 		
 		//cruzamientos:
 		
-		CrossoverOperator<IntegerSolution> crossover1 = new ColumnCrossover(0.3, instancia.nFamilias,
-				instancia.nMateriales);
-		CrossoverOperator<IntegerSolution> crossover2 = new FilasCrossover(0.4, instancia.nFamilias,
-				instancia.nMateriales);
-		CrossoverOperator<IntegerSolution> crossover3 = new SubMatrizCrossover(0.3, instancia.nFamilias,
-				instancia.nMateriales);
-		CrossoverOperator<IntegerSolution> crossover4 = new PosicionAPosicionCrossover(0.3, instancia.nFamilias,
-				instancia.nMateriales);
+		double pC = 0.90; // C25
+
+		CrossoverOperator<IntegerSolution> crossover1 =
+		    new ColumnCrossover(pC * 0.4, instancia.nFamilias, instancia.nMateriales);
+		CrossoverOperator<IntegerSolution> crossover2 =
+		    new FilasCrossover(pC * 0.4, instancia.nFamilias, instancia.nMateriales);
+		CrossoverOperator<IntegerSolution> crossover3 =
+		    new SubMatrizCrossover(pC * 0.1, instancia.nFamilias, instancia.nMateriales);
+		CrossoverOperator<IntegerSolution> crossover4 =
+		    new PosicionAPosicionCrossover(pC * 0.1, instancia.nFamilias, instancia.nMateriales);
+
 		
 		List<CrossoverOperator<IntegerSolution>>cruzamientos = new ArrayList<>();
 		cruzamientos.add(crossover1);
@@ -87,12 +86,7 @@ public class MaterialAllocationNSGAIIRunner {
 		
 		//mutaciones:
 		
-		double pm;
-		switch (nombreInstancia) {
-		  case "pequena": pm = 0.15; break;
-		  case "mediana": pm = 0.40; break;
-		  default:        pm = 0.12; break;
-		}
+		double pm = 0.20; // C25
 
 		MutationOperator<IntegerSolution> mutacion1 = new SwapMaterialesMutation(pm, instancia.nFamilias,
 		    instancia.nMateriales, instancia.demanda);
@@ -119,8 +113,6 @@ public class MaterialAllocationNSGAIIRunner {
 
 
 		// --------------------------------------------------
-
-
 		//int populationSize = 50;
 		//int offspringPopulationSize = 50;
 
@@ -156,7 +148,8 @@ public class MaterialAllocationNSGAIIRunner {
 		System.out.println("Tiempo de ejecución NSGA-II: " + elapsedSeconds + " segundos");
 		
 		// exportar resultados a CSV para graficar 
-		String outputFile = "resultados_nsga2_greedy.csv";
+		String outputFile = String.format("final_%s_run%s.csv", nombreInstancia, runId);
+
 
 		try (FileWriter writer = new FileWriter(outputFile)) {
 		    writer.write("tipo,f1,f2\n");
