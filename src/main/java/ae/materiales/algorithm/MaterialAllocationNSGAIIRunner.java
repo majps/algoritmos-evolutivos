@@ -63,7 +63,7 @@ public class MaterialAllocationNSGAIIRunner {
 		
 		//cruzamientos:
 		
-		double pC = 0.90; // C25
+		double pC = 0.75; // C25
 
 		CrossoverOperator<IntegerSolution> crossover1 =
 		    new ColumnCrossover(pC * 0.4, instancia.nFamilias, instancia.nMateriales);
@@ -87,7 +87,7 @@ public class MaterialAllocationNSGAIIRunner {
 		
 		//mutaciones:
 		
-		double pm = 0.20; // C25
+		double pm = 0.30; // C25
 
 		MutationOperator<IntegerSolution> mutacion1 = new SwapMaterialesMutation(pm, instancia.nFamilias,
 		    instancia.nMateriales, instancia.demanda);

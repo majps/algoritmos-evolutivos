@@ -1,0 +1,4 @@
+instancia,hv_mean,hv_std,domina_greedy_pct,n_runs
+pequena,0.00830948,0.00076494,100.0,10
+mediana,0.00422933,0.00114064,50.0,10
+grande,0.00531532,0.00068855,100.0,10

@@ -25,6 +25,7 @@ def leer_csv(path):
     return points, greedy
 
 
+
 def no_dominated(points):
     nd = []
     for i, p in enumerate(points):
@@ -77,7 +78,7 @@ def dominates_front_over_greedy(points, greedy):
 
 
 def main():
-    base_dir = "resultados_finales"
+    base_dir = "resultados_finales_C25"
     instancias = ["pequena", "mediana", "grande"]
 
     resumen_global = []
