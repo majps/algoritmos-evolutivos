@@ -51,13 +51,13 @@ public class MaterialAllocationNSGAIIRunner {
 		
 		//cruzamientos:
 		
-		CrossoverOperator<IntegerSolution> crossover1 = new ColumnCrossover(0.2, instancia.nFamilias,
+		CrossoverOperator<IntegerSolution> crossover1 = new ColumnCrossover(0.3, instancia.nFamilias,
 				instancia.nMateriales);
 		CrossoverOperator<IntegerSolution> crossover2 = new FilasCrossover(0.4, instancia.nFamilias,
 				instancia.nMateriales);
-		CrossoverOperator<IntegerSolution> crossover3 = new SubMatrizCrossover(0.2, instancia.nFamilias,
+		CrossoverOperator<IntegerSolution> crossover3 = new SubMatrizCrossover(0.3, instancia.nFamilias,
 				instancia.nMateriales);
-		CrossoverOperator<IntegerSolution> crossover4 = new PosicionAPosicionCrossover(0.2, instancia.nFamilias,
+		CrossoverOperator<IntegerSolution> crossover4 = new PosicionAPosicionCrossover(0.3, instancia.nFamilias,
 				instancia.nMateriales);
 		
 		List<CrossoverOperator<IntegerSolution>>cruzamientos = new ArrayList<>();
@@ -75,7 +75,7 @@ public class MaterialAllocationNSGAIIRunner {
 		double pm;
 		switch (nombreInstancia) {
 		  case "pequena": pm = 0.15; break;
-		  case "mediana": pm = 0.20; break;
+		  case "mediana": pm = 0.40; break;
 		  default:        pm = 0.12; break;
 		}
 
@@ -98,20 +98,20 @@ public class MaterialAllocationNSGAIIRunner {
 		GreedySolver greedy = new GreedySolver(instancia, problema);
 		IntegerSolution solGreedy = greedy.allocate();
 		problema.evaluate(solGreedy);
-		if (!"pequena".equals(nombreInstancia)) {
+		if (!"pequena".equals(nombreInstancia) && !"mediana".equals(nombreInstancia)) {
 		    problema.setSeedFromSolution(solGreedy);
 		}
 
 
 		// --------------------------------------------------
 
-		int populationSize = 50;
-		int offspringPopulationSize = 50;
+		int populationSize = 100;
+		int offspringPopulationSize = 100;
 
 		int maxEvaluations;
 		switch (nombreInstancia) {
 		  case "pequena": maxEvaluations = 50_000; break;
-		  case "mediana": maxEvaluations = 150_000; break;
+		  case "mediana": maxEvaluations = 600_000; break;
 		  default:        maxEvaluations = 300_000; break; // grande
 		}
 
@@ -120,15 +120,18 @@ public class MaterialAllocationNSGAIIRunner {
 		        .setTermination(new TerminationByEvaluations(maxEvaluations))
 		        .build();
 
-		
-		// de jmetal-component
-		//EvolutionaryAlgorithm<IntegerSolution> algoritmo = new NSGAIIBuilder<IntegerSolution>(problema, populationSize,
-		//		offspringPopulationSize, crossover, mutacion).build();
+		long startTime = System.currentTimeMillis();
 
 		// Ejecutar el algoritmo
 		algoritmo.run();
 
 		List<IntegerSolution> poblacionFinal = algoritmo.result();
+		
+		long endTime = System.currentTimeMillis();
+		long elapsedMillis = endTime - startTime;
+		double elapsedSeconds = elapsedMillis / 1000.0;
+
+		System.out.println("Tiempo de ejecución NSGA-II: " + elapsedSeconds + " segundos");
 		
 		// exportar resultados a CSV para graficar 
 		String outputFile = "resultados_nsga2_greedy.csv";
