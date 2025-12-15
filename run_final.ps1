@@ -8,8 +8,8 @@ if ($LASTEXITCODE -ne 0) { throw "Fallo mvn package" }
 $jar = "target/materiales-final-jar-with-dependencies.jar"
 if (!(Test-Path $jar)) { throw "No existe el jar: $jar" }
 
-$instancias = @("pequena", "mediana", "grande")
-$runs = 10
+$instancias = @("mediana")
+$runs = 30
 
 foreach ($inst in $instancias) {
   for ($r = 0; $r -lt $runs; $r++) {
