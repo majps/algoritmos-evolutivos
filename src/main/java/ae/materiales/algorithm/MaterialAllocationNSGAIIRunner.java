@@ -35,7 +35,7 @@ public class MaterialAllocationNSGAIIRunner {
 		int maxEvaluations = 600_000;
 		
 		//CAMBIAR ACA nombreInstancia PARA ELEGIR CUAL EJECUTAR CON EL RUNNER:
-		String nombreInstancia = (args.length > 0) ? args[0] : "grande";
+		String nombreInstancia = (args.length > 0) ? args[0] : "pequena";
 		String runId = (args.length > 1) ? args[1] : "0";
 
 		
@@ -111,19 +111,6 @@ public class MaterialAllocationNSGAIIRunner {
 		if (!"pequena".equals(nombreInstancia) && !"mediana".equals(nombreInstancia)) {
 		    problema.setSeedFromSolution(solGreedy);
 		}
-
-
-		// --------------------------------------------------
-		//int populationSize = 50;
-		//int offspringPopulationSize = 50;
-
-
-		//int maxEvaluations;
-		/*switch (nombreInstancia) {
-		  case "pequena": maxEvaluations = 50_000; break;
-		  case "mediana": maxEvaluations = 600_000; break;
-		  default:        maxEvaluations = 300_000; break; // grande
-		}*/
 
 		EvolutionaryAlgorithm<IntegerSolution> algoritmo =
 		    new NSGAIIBuilder<IntegerSolution>(problema, populationSize, offspringPopulationSize, crossover, mutacion)

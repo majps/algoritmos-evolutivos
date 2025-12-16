@@ -78,7 +78,7 @@ def dominates_front_over_greedy(points, greedy):
 
 
 def main():
-    base_dir = "resultados_finales_mediana"
+    base_dir = "resultados_finales_C25"
     instancias = ["pequena"," mediana", "grande"]
 
     resumen_global = []
