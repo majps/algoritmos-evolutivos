@@ -31,9 +31,6 @@ public class MaterialAllocationNSGAIICalibrationRunner {
 
     public static void main(String[] args) {
 
-        // -----------------------------
-        // 1) Argumentos
-        // -----------------------------
         String nombreInstancia = (args.length > 0) ? args[0] : "mediana";
         String configId        = (args.length > 1) ? args[1] : "C0";
         String runId           = (args.length > 2) ? args[2] : "0";
@@ -42,9 +39,6 @@ public class MaterialAllocationNSGAIICalibrationRunner {
         System.out.println("Config: " + configId);
         System.out.println("Run id: " + runId);
 
-        // -----------------------------
-        // 2) Elegir instancia
-        // -----------------------------
         Instance instancia;
 
         switch (nombreInstancia) {

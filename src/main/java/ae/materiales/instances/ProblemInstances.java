@@ -15,8 +15,8 @@ public class ProblemInstances {
             25.0, // cal
             4.0,  // ticholo
             1.0,  // clavos
-            25.0, // arena bolsa 25 kg (Sodimac)
-            22.0  // pintura látex balde 20 L (Sodimac)
+            25.0, // arena 
+            22.0  // pintura látex  
     };
 
     private static final int N_MAT_TOTAL = PESO.length; // 8
